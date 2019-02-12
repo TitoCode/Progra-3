@@ -4,6 +4,7 @@ package nomina;
 import java.util.Random;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.text.DecimalFormat;
 
 /**
  * Carlos Augusto Rodas Guerra
@@ -21,6 +22,7 @@ public class Nomina_F extends javax.swing.JFrame {
     String Vec [] = {"Nombre","Departamento","Salario Base","ISR","Deducciones","Percepcion","Sueldo Liquido"};// Este vector es el que maneja el nombre de las columnas
     Random rand = new Random();// variable random para generar todos los valores del empleado.
     DefaultTableModel Modelo, SL;// Se crea un objeto tipo DefaultTableModel
+    DecimalFormat Deci = new DecimalFormat("0.00");
     
     int TProy = 0, TInfo = 0, TCyD = 0, TRyS = 0, TNomi = 0;// Son variables que llevaran el control del total del sueldo liquido por departamento
     String Vec_Tsl[] = {"Proyectos", "Informatica","Capacitacion y Desarrollo","Reclutamiento y Selección","Nomina"};
@@ -64,8 +66,8 @@ public void Datos()// El siguiente metodo es el que genera y selecciona los dato
         case 4:{Departamento = "Nominas";TNomi += SueldoLiquido;}break;
     }
     // Calculos del ISR
-    if (SalarioBase > 5000){ISR = SalarioBase*0.03;}
-    else if ((SalarioBase >= 10000) &&(SalarioBase < 100000) ){ISR = SalarioBase*0.05;}
+    if ((SalarioBase > 2600)&&(SalarioBase < 5000)){ISR = SalarioBase*0.03;}
+    else if ((SalarioBase >= 5000) &&(SalarioBase < 10000) ){ISR = SalarioBase*0.05;}
     else if (SalarioBase >= 10000){ISR = SalarioBase*0.1;}
 }
 
@@ -78,7 +80,7 @@ public void Ingresar(){
     Ded = Integer.toString(Deducciones);
     Per = Integer.toString(Percepcion);
     SL = Integer.toString(SueldoLiquido);
-    isr = String.valueOf(ISR);
+    isr = String.valueOf(Deci.format(ISR));
     String Datos [] = {Nom,Dep,SB,isr,Ded,Per,SL};// Se crea el vector el cual seguira el modelo del vector utilizado en la tabla
     Modelo.addRow(Datos); // se agregan los datos a la tabla
    
