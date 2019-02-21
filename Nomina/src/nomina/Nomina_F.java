@@ -4,6 +4,7 @@ package nomina;
 import java.util.Random;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.text.DecimalFormat;
 
 /**
  * Carlos Augusto Rodas Guerra
@@ -18,15 +19,16 @@ public class Nomina_F extends javax.swing.JFrame {
     int SalarioBase, Deducciones, Percepcion, SueldoLiquido, Nrand; // Las siguientes variales se utilizan en el metodo Datos
     String Departamento, Nombre; int opc;// la variable opc se utilizara en el switch del metodo Datos
     String Mat [][] = {}; // Esta matriz es la que se usa de referencia para llenar la tabla
-    String Vec [] = {"Nombre","Departamento","Salario Base","ISR","Deducciones","Percepcion","Sueldo Liquido"};// Este vector es el que maneja el nombre de las columnas
+    String Vec [] = {"Nombre","Departamento","Salario Base","IGSS","ISR","Deducciones","Percepcion","Sueldo Liquid}o"};// Este vector es el que maneja el nombre de las columnas
     Random rand = new Random();// variable random para generar todos los valores del empleado.
     DefaultTableModel Modelo, SL;// Se crea un objeto tipo DefaultTableModel
+    DecimalFormat Deci = new DecimalFormat("0.00");
     
     int TProy = 0, TInfo = 0, TCyD = 0, TRyS = 0, TNomi = 0;// Son variables que llevaran el control del total del sueldo liquido por departamento
     String Vec_Tsl[] = {"Proyectos", "Informatica","Capacitacion y Desarrollo","Reclutamiento y Selección","Nomina"};
     String Mat_Tsl [][] = {{}, {}};
     
-    double ISR;
+    double ISR = 0, IGSS = 0;
     public Nomina_F() {
         initComponents();
         Modelo = new DefaultTableModel(Mat, Vec);// Se dice que el objeto Model se trabajara como una matriz
@@ -63,23 +65,29 @@ public void Datos()// El siguiente metodo es el que genera y selecciona los dato
         case 3:{Departamento = " Reclutamiento y Seleccion"; TRyS += SueldoLiquido;}break;
         case 4:{Departamento = "Nominas";TNomi += SueldoLiquido;}break;
     }
+    
     // Calculos del ISR
-    if (SalarioBase > 5000){ISR = SalarioBase*0.03;}
-    else if ((SalarioBase >= 10000) &&(SalarioBase < 100000) ){ISR = SalarioBase*0.05;}
+    if ((SalarioBase > 2600)&&(SalarioBase < 5000)){ISR = SalarioBase*0.03;}
+    else if ((SalarioBase >= 5000) &&(SalarioBase < 10000) ){ISR = SalarioBase*0.05;}
     else if (SalarioBase >= 10000){ISR = SalarioBase*0.1;}
+    else {ISR = 0;}
+    // Calculo IGSS
+    if (Chb_IGSS.isSelected() == true){ IGSS = SalarioBase*0.0483;}
+    else {IGSS = 0;}
 }
 
 public void Ingresar(){
     Nombre = Txt_nombre.getText();// Se obtiene el nombre ingresado
-    String Nom,Dep, SB, isr, Ded, Per, SL;// se crean variable que seran ingresadas a la tabla
+    String Nom,Dep, SB, igss, isr, Ded, Per, SL;// se crean variable que seran ingresadas a la tabla
     Nom = Nombre;
     Dep = Departamento;
     SB = Integer.toString(SalarioBase);
     Ded = Integer.toString(Deducciones);
     Per = Integer.toString(Percepcion);
     SL = Integer.toString(SueldoLiquido);
-    isr = String.valueOf(ISR);
-    String Datos [] = {Nom,Dep,SB,isr,Ded,Per,SL};// Se crea el vector el cual seguira el modelo del vector utilizado en la tabla
+    isr = String.valueOf(Deci.format(ISR));
+    igss = String.valueOf(Deci.format(IGSS));
+    String Datos [] = {Nom,Dep,SB,igss,isr,Ded,Per,SL};// Se crea el vector el cual seguira el modelo del vector utilizado en la tabla
     Modelo.addRow(Datos); // se agregan los datos a la tabla
    
 }
@@ -95,6 +103,7 @@ public void Ingresar(){
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
+        Chb_IGSS = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -109,19 +118,19 @@ public void Ingresar(){
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Nombre", "Departamento", "Salario Base", "ISR", "Deducciones", "Percepcion", "Sueldo Liquido"
+                "Nombre", "Departamento", "Salario Base", "IGSS", "ISR", "Deducciones", "Percepcion", "Sueldo Liquido"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -138,6 +147,8 @@ public void Ingresar(){
 
         jLabel2.setText("Sueldo Liquido por Departamento");
 
+        Chb_IGSS.setText("IGSS");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -148,13 +159,17 @@ public void Ingresar(){
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(11, 11, 11)
+                                .addComponent(Chb_IGSS))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(Txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(42, 42, 42)
-                                .addComponent(Btn_agregar))
-                            .addComponent(jLabel2)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(Btn_agregar)))
                         .addGap(0, 526, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -162,7 +177,9 @@ public void Ingresar(){
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(Chb_IGSS))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -173,7 +190,7 @@ public void Ingresar(){
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(360, Short.MAX_VALUE))
+                .addContainerGap(359, Short.MAX_VALUE))
         );
 
         pack();
@@ -231,6 +248,7 @@ public void Ingresar(){
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Btn_agregar;
+    private javax.swing.JCheckBox Chb_IGSS;
     private javax.swing.JTextField Txt_nombre;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
