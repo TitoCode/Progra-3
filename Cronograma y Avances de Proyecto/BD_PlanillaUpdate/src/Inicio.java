@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import javax.swing.JOptionPane;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -11,18 +5,13 @@ import javax.swing.table.DefaultTableModel;
 import java.text.DecimalFormat;
 import java.sql.*;
 
-
-/*
-0901-17-65 Antonio Manuel Alejandro Garcia Gonzalez.
-
-*/
-
 public class Inicio extends javax.swing.JFrame {
     
     
     DefaultTableModel tabla = new DefaultTableModel();
     String IGSS, sueldo, ISR;
-    double ValorDetalle;
+    double ValorDetalle, Igss, ValorTotal=0;
+    
     private void Clear(){
         while (tabla.getRowCount() > 0) {
                tabla.removeRow(0);
@@ -30,7 +19,10 @@ public class Inicio extends javax.swing.JFrame {
     }
     
     public void ObtenerDatos(){
-        Clear();        
+        Clear();         
+        if (!"".equals(txt_CodigoNomina.getText())){
+            JOptionPane.showMessageDialog(null,"No ha Completado Todos los Datos");
+        }else{
             try{
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/umg", "root", "");
             PreparedStatement pst = cn.prepareStatement("select encabezado_nomina.codigo_nomina, empleado.codigo_empleado,"
@@ -38,47 +30,39 @@ public class Inicio extends javax.swing.JFrame {
             pst.setString(1, txt_CodigoNomina.getText().trim());
             ResultSet ConsultaNomina = pst.executeQuery();
           
-            while(ConsultaNomina.next())
-           {
-               Object []fila = new Object[5];
+            while(ConsultaNomina.next()){
+               Object []fila = new Object[4];
                fila[0] = ConsultaNomina.getString("codigo_nomina");
                fila[1] = ConsultaNomina.getString("codigo_empleado");
                fila[2] = ConsultaNomina.getString("sueldo_empleado");
                fila[3] = ConsultaNomina.getString("IGSS");
                sueldo = fila[2].toString();
-               IGSS= fila[3].toString();
                
-               if (Integer.parseInt(IGSS) == 1)
-               {
-                   
-               }
-               else
-               {
-                    if ((Double.parseDouble(sueldo)>2600) && (Double.parseDouble(sueldo)<5000))
+               if ((Double.parseDouble(sueldo)>2600) && (Double.parseDouble(sueldo)<5000))
                     {
-                        ISR = "C3"; 
+                        fila[2]="C3"; 
                         ValorDetalle = Double.parseDouble(sueldo)*0.03;
-                        fila[4] = (ValorDetalle);
+                        fila[3] = (ValorDetalle);
                     }
                     else if ((Double.parseDouble(sueldo) >= 5000) &&(Double.parseDouble(sueldo) < 10000) )
                     {
-                        ISR = "C4"; 
-                        ValorDetalle = Double.parseDouble(sueldo)*0.03;
-                        fila[4] = (ValorDetalle);
+                        fila[2]="C4"; 
+                        ValorDetalle = Double.parseDouble(sueldo)*0.05;
+                        fila[3] = (ValorDetalle);
                     }
                     else if (Double.parseDouble(sueldo) >= 10000)
                     {
-                        ISR = "C5"; 
-                        ValorDetalle = Double.parseDouble(sueldo)*0.03;
-                        fila[4] = (ValorDetalle);
+                        fila[2]="C5"; 
+                        ValorDetalle = Double.parseDouble(sueldo)*0.1;
+                        fila[3] = (ValorDetalle);
                     }
                     else
                     {
-                        ISR = "C2"; 
-                        ValorDetalle = Double.parseDouble(sueldo)*0.03;
+                        fila[2]="C2"; 
+                        ValorDetalle = Double.parseDouble(sueldo)*0.00;
                         fila[4] = (ValorDetalle);
                     }
-               }
+               ValorTotal=ValorTotal+ValorDetalle;
                tabla.addRow(fila);
                
            }
@@ -87,28 +71,67 @@ public class Inicio extends javax.swing.JFrame {
            }catch (Exception e){
            JOptionPane.showMessageDialog(null, "No Se Encuentra La Nomina");
            }
-        if ((TXT_InsNombre.getText() == "")&&(txt_CodigoNomina.getText() != ""))
-        {
-           
             
-        }
-        else if(txt_CodigoNomina.getText() == "")
-        {
+           try{
+            Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/umg", "root", "");
+            PreparedStatement pst = cn.prepareStatement("select encabezado_nomina.codigo_nomina, empleado.codigo_empleado,"
+            + "empleado.sueldo_empleado, empleado.IGSS from encabezado_nomina, empleado where codigo_nomina = ?");
+            pst.setString(1, txt_CodigoNomina.getText().trim());
+            ResultSet ConsultaNomina = pst.executeQuery();
+          
+            while(ConsultaNomina.next()){
+               Object []fila = new Object[4];
+               fila[0] = ConsultaNomina.getString("codigo_nomina");
+               fila[1] = ConsultaNomina.getString("codigo_empleado");
+               fila[2] = ConsultaNomina.getString("sueldo_empleado");
+               fila[3] = ConsultaNomina.getString("IGSS");
+               sueldo = fila[2].toString();
+               IGSS= fila[3].toString();
+               
+               if (Double.parseDouble(IGSS) == 1){
+                   fila[2]="C1";
+                   ValorDetalle =0.0483*Double.parseDouble(sueldo);
+                   fila[3] = (ValorDetalle);
+               }else{
+                   fila[2]="C1";
+                   ValorDetalle =0;
+                   fila[3] = (ValorDetalle);
+               }
+               ValorTotal=ValorTotal+ValorDetalle;
+               tabla.addRow(fila);
+               
+           }
+     
+           }catch (Exception e){
+           JOptionPane.showMessageDialog(null, "No Se Encuentra La Nomina");
+           }
+           try{
+            String ID = txt_CodigoNomina.getText().trim();
+
+            Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/umg", "root", "");
+            PreparedStatement pst = cn.prepareStatement("update encabezado_nomina set Valor_Nomina = ? where codigo_nomina ='"+ ID +"'");
             
-        }
-        else
-        {
-            
+            pst.setString(1, String.valueOf(ValorTotal).trim());
+          
+            pst.executeUpdate();
+
+            JOptionPane.showMessageDialog(null, "Se Actualizo La Nomina");
+     
+           }catch (Exception e){
+           JOptionPane.showMessageDialog(null, "No Se Actualizo La Nomina");
+           }
         }
          
     }
     public Inicio() {
         
         initComponents();
+        this.setLocationRelativeTo(null);
+        setResizable(false);
         this.Tabla_Detalles.setModel(tabla);
         tabla.addColumn("Codigo Nomina");
         tabla.addColumn("Codigo Empleado");
-        tabla.addColumn("Codigo Concept");
+        tabla.addColumn("Codigo Concepto");
         tabla.addColumn("Valor Detalle");
     }
 
@@ -117,19 +140,18 @@ public class Inicio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        TXT_InsNombre = new javax.swing.JTextField();
         BT_InsNombre = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         Tabla_Detalles = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txt_CodigoNomina = new javax.swing.JTextField();
+        BtnEmpleado = new javax.swing.JButton();
+        BtnNominaEn = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        TXT_InsNombre.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TXT_InsNombreActionPerformed(evt);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
             }
         });
 
@@ -150,59 +172,85 @@ public class Inicio extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(Tabla_Detalles);
 
-        jLabel1.setText("Nombre:");
-
         jLabel5.setText("Codigo Nomina");
+
+        BtnEmpleado.setText("Ingreso Nuevo Empleado");
+        BtnEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnEmpleadoActionPerformed(evt);
+            }
+        });
+
+        BtnNominaEn.setText("Mostrar Nomina Encabezado");
+        BtnNominaEn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnNominaEnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(89, 89, 89)
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
                                 .addComponent(txt_CodigoNomina, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(29, 29, 29)
-                                .addComponent(BT_InsNombre))
-                            .addComponent(TXT_InsNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(227, Short.MAX_VALUE))
+                                .addComponent(BT_InsNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(119, 119, 119)
+                                .addComponent(BtnEmpleado)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(BtnNominaEn, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 108, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TXT_InsNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(25, 25, 25)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(BtnNominaEn, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                    .addComponent(BtnEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txt_CodigoNomina, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BT_InsNombre))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void TXT_InsNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TXT_InsNombreActionPerformed
-        
-    }//GEN-LAST:event_TXT_InsNombreActionPerformed
-
     private void BT_InsNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_InsNombreActionPerformed
         ObtenerDatos();
 
     }//GEN-LAST:event_BT_InsNombreActionPerformed
+
+    private void BtnEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnEmpleadoActionPerformed
+        new Ingresp_empleado().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_BtnEmpleadoActionPerformed
+
+    private void BtnNominaEnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNominaEnActionPerformed
+        new EncabezadoNomina().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_BtnNominaEnActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        this.dispose();
+        Login ingreso = new Login();
+        ingreso.setVisible(true);
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -241,9 +289,9 @@ public class Inicio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_InsNombre;
-    private javax.swing.JTextField TXT_InsNombre;
+    private javax.swing.JButton BtnEmpleado;
+    private javax.swing.JButton BtnNominaEn;
     private javax.swing.JTable Tabla_Detalles;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txt_CodigoNomina;
