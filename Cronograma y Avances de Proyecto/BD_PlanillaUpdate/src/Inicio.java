@@ -7,22 +7,29 @@ import java.sql.*;
 
 public class Inicio extends javax.swing.JFrame {
     
-    
+    //Modelo de tabla para poder insertar
     DefaultTableModel tabla = new DefaultTableModel();
     String IGSS, sueldo, ISR;
     double ValorDetalle, Igss, ValorTotal=0;
+    //Constantes para calculo de conceptos
+    double constIGSS = 0.0483, constISR1 = 0.03, constISR2 = 0.05, constISR3 = 0.1;
     
+   // metodo para limpiar la tabla cada vez que se realiza una actualización
     private void Clear(){
         while (tabla.getRowCount() > 0) {
                tabla.removeRow(0);
         }
     }
-    
+    // metodo con consulta compuesta para obtener los datos para tabla nomina detalle
+    // se muestra primero los conceptos de ISR seguido por el concepto de IGSS
     public void ObtenerDatos(){
+        // Metodo que vacia
         Clear();         
-        if (!"".equals(txt_CodigoNomina.getText())){
+        // se valida si se ingreso un codigo de nomina para buscar
+        if (txt_CodigoNomina.getText() == ""){
             JOptionPane.showMessageDialog(null,"No ha Completado Todos los Datos");
         }else{
+            // Consulta para calculo de ISR
             try{
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/umg", "root", "");
             PreparedStatement pst = cn.prepareStatement("select encabezado_nomina.codigo_nomina, empleado.codigo_empleado,"
@@ -41,19 +48,19 @@ public class Inicio extends javax.swing.JFrame {
                if ((Double.parseDouble(sueldo)>2600) && (Double.parseDouble(sueldo)<5000))
                     {
                         fila[2]="C3"; 
-                        ValorDetalle = Double.parseDouble(sueldo)*0.03;
+                        ValorDetalle = Double.parseDouble(sueldo)*constISR1;
                         fila[3] = (ValorDetalle);
                     }
                     else if ((Double.parseDouble(sueldo) >= 5000) &&(Double.parseDouble(sueldo) < 10000) )
                     {
                         fila[2]="C4"; 
-                        ValorDetalle = Double.parseDouble(sueldo)*0.05;
+                        ValorDetalle = Double.parseDouble(sueldo)*constISR2;
                         fila[3] = (ValorDetalle);
                     }
                     else if (Double.parseDouble(sueldo) >= 10000)
                     {
                         fila[2]="C5"; 
-                        ValorDetalle = Double.parseDouble(sueldo)*0.1;
+                        ValorDetalle = Double.parseDouble(sueldo)*constISR3;
                         fila[3] = (ValorDetalle);
                     }
                     else
@@ -71,7 +78,7 @@ public class Inicio extends javax.swing.JFrame {
            }catch (Exception e){
            JOptionPane.showMessageDialog(null, "No Se Encuentra La Nomina");
            }
-            
+            // Consulta para calculo de IGSS
            try{
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/umg", "root", "");
             PreparedStatement pst = cn.prepareStatement("select encabezado_nomina.codigo_nomina, empleado.codigo_empleado,"
@@ -90,7 +97,7 @@ public class Inicio extends javax.swing.JFrame {
                
                if (Double.parseDouble(IGSS) == 1){
                    fila[2]="C1";
-                   ValorDetalle =0.0483*Double.parseDouble(sueldo);
+                   ValorDetalle =constIGSS*Double.parseDouble(sueldo);
                    fila[3] = (ValorDetalle);
                }else{
                    fila[2]="C1";
@@ -105,6 +112,7 @@ public class Inicio extends javax.swing.JFrame {
            }catch (Exception e){
            JOptionPane.showMessageDialog(null, "No Se Encuentra La Nomina");
            }
+           // se ingresa el total de nomina detalle a la tabla de nomina encabezado
            try{
             String ID = txt_CodigoNomina.getText().trim();
 
@@ -230,22 +238,22 @@ public class Inicio extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+// Si se preciona "Enter" en el text field realiza tambien la busqueda
     private void BT_InsNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_InsNombreActionPerformed
         ObtenerDatos();
 
     }//GEN-LAST:event_BT_InsNombreActionPerformed
-
+// Boton que lleva al formulario para ingresar empleados
     private void BtnEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnEmpleadoActionPerformed
         new Ingresp_empleado().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_BtnEmpleadoActionPerformed
-
+//Boton que lleva al formulario para buscar una nomina en la tabla encabezado
     private void BtnNominaEnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNominaEnActionPerformed
         new EncabezadoNomina().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_BtnNominaEnActionPerformed
-
+// Si se cierra el formulario de inicio regresa el usuario al formulario de login
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         this.dispose();
         Login ingreso = new Login();

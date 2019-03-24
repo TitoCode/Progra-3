@@ -103,7 +103,7 @@ public class EncabezadoNomina extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+// Realiza busqueda de encabezado de nomina
     private void BtnBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBusquedaActionPerformed
         Clear();
         try{
@@ -129,7 +129,7 @@ public class EncabezadoNomina extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "No Se Encuentra La Nomina");
         }
     }//GEN-LAST:event_BtnBusquedaActionPerformed
-
+// Si el formulario se de Encabezado nomina se cierra regresa al usuario al formulario de Inicio
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         this.dispose();
         Inicio ingreso = new Inicio();

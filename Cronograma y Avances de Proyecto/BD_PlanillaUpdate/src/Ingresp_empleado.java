@@ -179,7 +179,7 @@ public class Ingresp_empleado extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+// El boton ingresa un nuevo empleado a la tabla de empleado
     private void BtnIngresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnIngresoActionPerformed
 
         String caso_puesto,cod_puesto="",Igss;
@@ -203,6 +203,7 @@ public class Ingresp_empleado extends javax.swing.JFrame {
                 Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/umg", "root", "");
                 PreparedStatement pst = cn.prepareStatement("insert into empleado values(?,?,?,?,?,?)");
 
+                // dependiendo del puesto seleccionado asigna el codigo correspondiente en la base de datos
                 switch(caso_puesto){
                     case "Gerente":{cod_puesto="P1";}break;
                     case "Supervisor":{cod_puesto="P2";}break;
@@ -248,6 +249,7 @@ public class Ingresp_empleado extends javax.swing.JFrame {
         //fin if
     }//GEN-LAST:event_BtnIngresoActionPerformed
 
+    // Boton que realiza una busqueda de un empleado
     private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBuscarActionPerformed
         if ("".equals(TxtCod_Emp.getText())) {
            JOptionPane.showMessageDialog(null, "Ingrese el Código Empleado"); 
@@ -304,6 +306,7 @@ public class Ingresp_empleado extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_BtnBuscarActionPerformed
 
+    // Boton para eliminar un empleado de la base de datos
     private void BtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnEliminarActionPerformed
         if ("".equals(TxtCod_Emp.getText())) {
            JOptionPane.showMessageDialog(null, "Ingrese el Código Empleado"); 
@@ -329,7 +332,7 @@ public class Ingresp_empleado extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_BtnEliminarActionPerformed
-
+// Boton que permite modificar datos de un empleado existente en la base de datos
     private void BtnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnModificarActionPerformed
         if ("".equals(TxtCod_Emp.getText())) {
            JOptionPane.showMessageDialog(null, "Ingrese el Código Empleado"); 
@@ -399,7 +402,7 @@ public class Ingresp_empleado extends javax.swing.JFrame {
 
         // TODO add your handling code here:
     }//GEN-LAST:event_BtnLimpiarActionPerformed
-
+//Si se cierra el formulario para agregar empleados este regresa al usuario al formulario de inicio
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         this.dispose();
         Inicio ingreso = new Inicio();

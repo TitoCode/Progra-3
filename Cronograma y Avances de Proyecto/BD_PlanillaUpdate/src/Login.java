@@ -2,9 +2,7 @@ import java.sql.*;
 import javax.swing.JOptionPane;
 public class Login extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Login
-     */
+
     public Login() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -86,8 +84,9 @@ public class Login extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+// Boton para acceder a un usuario segun credenciales
     private void BtnIngresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnIngresoActionPerformed
+       //Se realiza una consula en la tabla usuario del codigo de usuario y clave  y si existe y coincide permite el acceso
         try{
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/umg", "root", "");
             PreparedStatement pst = cn.prepareStatement("select * from usuario where codigo_usuario = ? and clave_usuario=? and estado_usuario=1");
@@ -96,6 +95,7 @@ public class Login extends javax.swing.JFrame {
             pst.setString(2, TxtPassword.getText().trim());
             ResultSet rs = pst.executeQuery();
 
+            // Se de acceso al usuario y se llama a la form Inicio
             if(rs.next()){
                 new Inicio().setVisible(true);
                 //Sentencia para cerrar el programa
@@ -110,12 +110,14 @@ public class Login extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_BtnIngresoActionPerformed
 
+//Si se le da "Enter" al campo de Codigo usurio enfocara al campo de contraseña
     private void TxtCod_UsuarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtCod_UsuarioKeyPressed
         if(evt.getKeyCode()==java.awt.event.KeyEvent.VK_ENTER){
                  TxtPassword.requestFocus();
         }
     }//GEN-LAST:event_TxtCod_UsuarioKeyPressed
 
+    //Si se le da "Enter" al campo de contraseña de igual manrea realiza la consulta para dejar acceder al usuario
     private void TxtPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtPasswordKeyPressed
         if(evt.getKeyCode()==java.awt.event.KeyEvent.VK_ENTER){
                  if (TxtCod_Usuario.getText().length()==0 || TxtPassword.getText().length()==0) {
