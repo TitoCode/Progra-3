@@ -1,5 +1,5 @@
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
 /**
  * Carlos Augusto Rodas Guerra
  * 0901-17-963
@@ -9,25 +9,27 @@ public class ListasSimples extends javax.swing.JFrame {
     DefaultTableModel Modelo = new DefaultTableModel();
     Nodo Primero;
     boolean ListaCreada = false;
+    int contLista = 1;
     
-    public void Tabla(){
-    
-    Modelo.addColumn("No. Nodo");
-    Modelo.addColumn("Valor del Nodo");
-    this.Tabla.setModel(Modelo);
+    public void Limpiar(){
+    while (Modelo.getRowCount() > 0) {
+           Modelo.removeRow(0);
+        }
     }
     
     public void CrearLista(){
-         if(ListaCreada == false){Primero = null;}
-         else{ListaCreada = true;}
+         if(ListaCreada == false){Primero = null; ListaCreada = true;}
     }
     
     public void Insertar(int Dato){
         Nodo Temporal=new Nodo(Dato); 
 	Temporal.Siguiente=Primero;
 	Primero=Temporal;
-        JOptionPane.showMessageDialog(null,"Ingresado perro");
+        JOptionPane.showMessageDialog(null,"Dato Ingresado Correctamente");
         this.txt_Valor.setText("");
+        jLbl_Tamaño.setText(Integer.toString(contLista));
+        contLista += 1;
+        this.txt_Valor.requestFocus();
     }
     
     public void Mostrar(){
@@ -36,21 +38,77 @@ public class ListasSimples extends javax.swing.JFrame {
         }
         else
         {
+            Limpiar();
+            String Datos [] = new String[2];
             int cont = 0;
             Nodo aux=Primero;
             while (aux!=null)
             {
-                Tabla.setValueAt(String.valueOf(aux.info), cont, 1);
+                cont += 1;
+                Datos[0] = String.valueOf(cont);
+                Datos[1] = String.valueOf(aux.info);
+                Modelo.addRow(Datos);
+                aux=aux.Siguiente;
+            }	
+        }
+    }
+    
+    public void Buscar(){
+       if (Primero == null){
+            JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
+        }
+        else
+        {
+            int cont = 1;
+            String Datos [] = new String[2];
+            Nodo aux=Primero;
+            while (aux!=null)
+            {
+                Datos[0] = String.valueOf(cont);
+                Datos[1] = String.valueOf(aux.info);
+                if(Datos[1].equals(txt_Valor.getText()))
+                {
+                   Limpiar();
+                   Modelo.addRow(Datos);
+                }
                 aux=aux.Siguiente;
                 cont += 1;
             }
 		
+        } 
+    }
+    
+    public void Borrar(){
+        if (Primero == null){
+            JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
         }
+        else
+        {
+            int cont = 1;
+            String Datos [] = new String[2];
+            Nodo aux=Primero;
+            while (aux!=null)
+            {
+                Datos[0] = String.valueOf(cont);
+                Datos[1] = String.valueOf(aux.info);
+                if(Datos[1].equals(txt_Valor.getText()))
+                {
+                   Limpiar();
+                   Modelo.addRow(Datos);
+                }
+                aux=aux.Siguiente;
+                cont += 1;
+            }
+		
+        } 
     }
     
     public ListasSimples() {
         initComponents();
 
+        this.Tabla.setModel(Modelo);
+        Modelo.addColumn("No. Nodo");
+        Modelo.addColumn("Valor del Nodo");
     }
 
     /**
@@ -70,18 +128,19 @@ public class ListasSimples extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jLbl_Tamaño = new javax.swing.JLabel();
+        CB_Borrar = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         Tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
-                "No. Nodo", "Valor del Nodo"
+
             }
         ));
         jScrollPane1.setViewportView(Tabla);
@@ -94,6 +153,11 @@ public class ListasSimples extends javax.swing.JFrame {
         });
 
         jButton2.setText("Buscar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Valor del nodo:");
 
@@ -106,6 +170,14 @@ public class ListasSimples extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setText("Tamaño de la Lista: ");
+
+        jLbl_Tamaño.setText("-");
+
+        CB_Borrar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Borrado por Posicion", "Borrado por Valordel Nodo", "Borrar Primero", "Borrar Ultimon" }));
+
+        jLabel3.setText("Seleccione Tipo de Borrado");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -115,14 +187,22 @@ public class ListasSimples extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2))
-                    .addComponent(txt_Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txt_Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLbl_Tamaño))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2))
+                            .addComponent(CB_Borrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton4)
+                            .addComponent(jButton3)
+                            .addComponent(jLabel3))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -137,12 +217,20 @@ public class ListasSimples extends javax.swing.JFrame {
                     .addComponent(jButton1)
                     .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(CB_Borrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLbl_Tamaño))
+                .addGap(34, 34, 34))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(22, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20))
         );
@@ -159,6 +247,10 @@ public class ListasSimples extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         Mostrar();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        Buscar();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -196,12 +288,16 @@ public class ListasSimples extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> CB_Borrar;
     private javax.swing.JTable Tabla;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLbl_Tamaño;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txt_Valor;
     // End of variables declaration//GEN-END:variables
