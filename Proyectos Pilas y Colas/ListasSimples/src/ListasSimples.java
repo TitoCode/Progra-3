@@ -10,17 +10,17 @@ public class ListasSimples extends javax.swing.JFrame {
     Nodo Primero;
     boolean ListaCreada = false;
     int contLista = 1;
-    
+    //Metodo para limpiar la tabla
     public void Limpiar(){
     while (Modelo.getRowCount() > 0) {
            Modelo.removeRow(0);
         }
     }
-    
+    //Metodo que crea la lista
     public void CrearLista(){
          if(ListaCreada == false){Primero = null; ListaCreada = true;}
     }
-    
+    //Metodo que inserta al principio de la lista
     public void Insertar(int Dato){
         Nodo Temporal=new Nodo(Dato); 
 	Temporal.Siguiente=Primero;
@@ -31,7 +31,7 @@ public class ListasSimples extends javax.swing.JFrame {
         contLista += 1;
         this.txt_Valor.requestFocus();
     }
-    
+    //Metodo que permite mostrar contenidos de la lista
     public void Mostrar(){
         if (Primero == null){
             JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
@@ -52,7 +52,7 @@ public class ListasSimples extends javax.swing.JFrame {
             }	
         }
     }
-    
+    //Metodo que busca y muesta la posicion y el valor buscado
     public void Buscar(){
        if (Primero == null){
             JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
@@ -62,13 +62,13 @@ public class ListasSimples extends javax.swing.JFrame {
             int cont = 1;
             String Datos [] = new String[2];
             Nodo aux=Primero;
+            Limpiar();
             while (aux!=null)
             {
                 Datos[0] = String.valueOf(cont);
                 Datos[1] = String.valueOf(aux.info);
                 if(Datos[1].equals(txt_Valor.getText()))
                 {
-                   Limpiar();
                    Modelo.addRow(Datos);
                 }
                 aux=aux.Siguiente;
@@ -77,30 +77,51 @@ public class ListasSimples extends javax.swing.JFrame {
 		
         } 
     }
-    
+    // Metodo Para borrar segun se seleccione en el combo box
     public void Borrar(){
-        if (Primero == null){
-            JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
-        }
-        else
-        {
-            int cont = 1;
-            String Datos [] = new String[2];
-            Nodo aux=Primero;
-            while (aux!=null)
-            {
-                Datos[0] = String.valueOf(cont);
-                Datos[1] = String.valueOf(aux.info);
-                if(Datos[1].equals(txt_Valor.getText()))
-                {
-                   Limpiar();
-                   Modelo.addRow(Datos);
+        int opc = CB_Borrar.getSelectedIndex();
+        Nodo anterior=Primero;
+        Nodo actual=Primero;
+        Limpiar();
+        switch (opc){
+            //Opcion que borra la opcion de nodo escogida
+            case 0:{
+
+            }break;// Fin case 0
+            //Opcion que borra el valor guardado dentro del nodo
+            case 1:{
+            
+            }break;// Fin case 1
+            //Opcion que borra la primera posicion
+            case 2:{
+                if (Primero == null){
+                    JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
+                } 
+                else{
+                    Primero=Primero.Siguiente;
+                    contLista-= 1;
+                    jLbl_Tamaño.setText(Integer.toString(contLista));
                 }
-                aux=aux.Siguiente;
-                cont += 1;
-            }
-		
-        } 
+            }break;// Fin case 2
+            //opcion que borra la ultima posicion
+            case 3:{
+                 if (Primero == null){
+                    JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
+                } 
+                else{
+                     
+                    while (actual.Siguiente!=null)
+                    {
+			anterior=actual;
+			actual=actual.Siguiente;
+                    }
+                    anterior.Siguiente=null;    
+                    contLista-= 1;
+                    jLbl_Tamaño.setText(Integer.toString(contLista));
+                }
+            }break;// Fin case 3
+        }//Fin switch
+        
     }
     
     public ListasSimples() {
@@ -122,12 +143,12 @@ public class ListasSimples extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         Tabla = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        btn_Ingresar = new javax.swing.JButton();
         txt_Valor = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        btn_Buscar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btn_eliminar = new javax.swing.JButton();
+        btn_Mostar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLbl_Tamaño = new javax.swing.JLabel();
         CB_Borrar = new javax.swing.JComboBox<>();
@@ -145,28 +166,33 @@ public class ListasSimples extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(Tabla);
 
-        jButton1.setText("Ingresar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btn_Ingresar.setText("Ingresar");
+        btn_Ingresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btn_IngresarActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Buscar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btn_Buscar.setText("Buscar");
+        btn_Buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btn_BuscarActionPerformed(evt);
             }
         });
 
         jLabel1.setText("Valor del nodo:");
 
-        jButton3.setText("Eliminar");
-
-        jButton4.setText("Mostrar Lista");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btn_eliminarActionPerformed(evt);
+            }
+        });
+
+        btn_Mostar.setText("Mostrar Lista");
+        btn_Mostar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_MostarActionPerformed(evt);
             }
         });
 
@@ -174,7 +200,7 @@ public class ListasSimples extends javax.swing.JFrame {
 
         jLbl_Tamaño.setText("-");
 
-        CB_Borrar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Borrado por Posicion", "Borrado por Valordel Nodo", "Borrar Primero", "Borrar Ultimon" }));
+        CB_Borrar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1.) Borrado por Posicion", "2.) Borrado por Valordel Nodo", "3.) Borrar Primero", "4.) Borrar Ultimo" }));
 
         jLabel3.setText("Seleccione Tipo de Borrado");
 
@@ -185,43 +211,48 @@ public class ListasSimples extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLbl_Tamaño))
+                    .addComponent(CB_Borrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
                             .addComponent(txt_Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
+                                .addComponent(btn_Ingresar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLbl_Tamaño))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2))
-                            .addComponent(CB_Borrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton4)
-                            .addComponent(jButton3)
+                                .addComponent(btn_Buscar))
+                            .addComponent(btn_Mostar)
+                            .addComponent(btn_eliminar)
                             .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(53, 53, 53)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)))
+                .addGap(34, 34, 34))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_Valor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel3)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_Valor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btn_Ingresar)
+                            .addComponent(btn_Buscar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_Mostar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_eliminar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(CB_Borrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -229,28 +260,28 @@ public class ListasSimples extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(jLbl_Tamaño))
                 .addGap(34, 34, 34))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btn_IngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_IngresarActionPerformed
         CrearLista();
         int num = Integer.parseInt(txt_Valor.getText());
         Insertar(num);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btn_IngresarActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btn_MostarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_MostarActionPerformed
         Mostrar();
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btn_MostarActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btn_BuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_BuscarActionPerformed
         Buscar();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btn_BuscarActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+    Borrar();
+    }//GEN-LAST:event_btn_eliminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -290,10 +321,10 @@ public class ListasSimples extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> CB_Borrar;
     private javax.swing.JTable Tabla;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btn_Buscar;
+    private javax.swing.JButton btn_Ingresar;
+    private javax.swing.JButton btn_Mostar;
+    private javax.swing.JButton btn_eliminar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
