@@ -166,11 +166,10 @@
     <Component class="javax.swing.JComboBox" name="CB_Borrar">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
+          <StringArray count="3">
             <StringItem index="0" value="1.) Borrado por Posicion"/>
-            <StringItem index="1" value="2.) Borrado por Valordel Nodo"/>
-            <StringItem index="2" value="3.) Borrar Primero"/>
-            <StringItem index="3" value="4.) Borrar Ultimo"/>
+            <StringItem index="1" value="2.) Borrar Primero"/>
+            <StringItem index="2" value="3.) Borrar Ultimo"/>
           </StringArray>
         </Property>
       </Properties>

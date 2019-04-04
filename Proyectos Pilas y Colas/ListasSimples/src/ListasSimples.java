@@ -44,11 +44,11 @@ public class ListasSimples extends javax.swing.JFrame {
             Nodo aux=Primero;
             while (aux!=null)
             {
-                cont += 1;
                 Datos[0] = String.valueOf(cont);
                 Datos[1] = String.valueOf(aux.info);
                 Modelo.addRow(Datos);
                 aux=aux.Siguiente;
+                cont += 1;
             }	
         }
     }
@@ -83,17 +83,32 @@ public class ListasSimples extends javax.swing.JFrame {
         Nodo anterior=Primero;
         Nodo actual=Primero;
         Limpiar();
+        int pos = Integer.parseInt(txt_Valor.getText());
         switch (opc){
             //Opcion que borra la opcion de nodo escogida
             case 0:{
+                
+                if (Primero == null){
+                    JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
+                } 
+                else{
+                    
+                    int k=0;
+                    if (pos>0){
+			while (k!=pos && actual.Siguiente != null)
+                            {
+				anterior=actual;
+				actual=actual.Siguiente;
+				k++;
+                            }
+			anterior.Siguiente=actual.Siguiente;
+                    }
+                }
 
             }break;// Fin case 0
             //Opcion que borra el valor guardado dentro del nodo
-            case 1:{
-            
-            }break;// Fin case 1
             //Opcion que borra la primera posicion
-            case 2:{
+            case 1:{
                 if (Primero == null){
                     JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
                 } 
@@ -102,9 +117,9 @@ public class ListasSimples extends javax.swing.JFrame {
                     contLista-= 1;
                     jLbl_Tamaño.setText(Integer.toString(contLista));
                 }
-            }break;// Fin case 2
+            }break;// Fin case 1
             //opcion que borra la ultima posicion
-            case 3:{
+            case 2:{
                  if (Primero == null){
                     JOptionPane.showMessageDialog(null,"La lista se encuentra vacia");
                 } 
@@ -119,9 +134,9 @@ public class ListasSimples extends javax.swing.JFrame {
                     contLista-= 1;
                     jLbl_Tamaño.setText(Integer.toString(contLista));
                 }
-            }break;// Fin case 3
+            }break;// Fin case 2
         }//Fin switch
-        
+       Mostrar(); 
     }
     
     public ListasSimples() {
@@ -200,7 +215,7 @@ public class ListasSimples extends javax.swing.JFrame {
 
         jLbl_Tamaño.setText("-");
 
-        CB_Borrar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1.) Borrado por Posicion", "2.) Borrado por Valordel Nodo", "3.) Borrar Primero", "4.) Borrar Ultimo" }));
+        CB_Borrar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1.) Borrado por Posicion", "2.) Borrar Primero", "3.) Borrar Ultimo" }));
 
         jLabel3.setText("Seleccione Tipo de Borrado");
 
