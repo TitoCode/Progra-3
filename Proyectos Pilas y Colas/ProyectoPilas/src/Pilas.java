@@ -15,67 +15,69 @@ public class Pilas extends javax.swing.JFrame {
     int contLista = 0;
     boolean ListaCreada = false;
     
+    //Metodo que vacia ("Limpia") la tabla
     public void Limpiar(){
         while (Modelo.getRowCount() > 0) {
                Modelo.removeRow(0);
         }
     }
-    
-    public void Crear(){
-        
-        if(ListaCreada == false){cima = null; ListaCreada = true;}
-        
-    }
-    
+    //El metodo ingresar los datos a la lista obteniendo los datos ingresados y pasa los parametros a la funcion InsertarPrincipio
+    //que utiliza la clase Libro
     public void Ingresar(){
         
         String StrTitulo, StrAutor, StrISBN;
-                StrTitulo = this.txt_Titulo.getText();
-                StrAutor = this.txt_Autor.getText();
-                StrISBN = this.txt_ISBN.getText();        
-                Libro Nuevo = new Libro(StrTitulo, StrAutor, StrISBN);      
-                InsertarPrincipio(Nuevo);
+        StrTitulo = this.txt_Titulo.getText();
+        StrAutor = this.txt_Autor.getText();
+        StrISBN = this.txt_ISBN.getText();        
+        Libro Nuevo = new Libro(StrTitulo, StrAutor, StrISBN);      
+        InsertarPrincipio(Nuevo);
         
     }
-    
+    //Metodo InsertarPrincipio es llamado en Metodo Ingresar para agregar datos a la lista.
     public void InsertarPrincipio(Libro libro) {
-		Nodo Nuevo =new Nodo(libro);
-		Nuevo.siguiente=cima;
-		cima=Nuevo;
-		contLista++;	
+        Nodo Nuevo =new Nodo(libro);
+        Nuevo.siguiente=cima;
+	cima=Nuevo;
+	contLista++;	
 	}
-    
+    //Metodo Borrar elimina la cima de la pila.
     public void Borrar(){
         
-        if (cima!= null) {
-                if (cima.siguiente==null) {
-                    cima=null;  
-                    contLista--;
-                } else {
-                    Nodo puntero=cima;
-                    while (puntero.siguiente.siguiente!=null) {                    
-                        puntero=puntero.siguiente;
-                    }
-                    puntero.siguiente=null;
-                    contLista--;
-                }
-            }
+        cima=cima.siguiente;
         
     }
-    
+    //Metodo Mostrar agrega los datos en la lista a la tabla
     public void Mostrar(){
-                String Data[] = new String[4];
-                int Contador = 0;
+        
+         String Data[] = new String[4];
+        int Contador = 0;
+        Nodo aux=cima;
+        while (aux!=null){
+        Data[0]= String.valueOf(Contador);
+        Data[1]= String.valueOf(aux.libro.titulo);
+        Data[2]= String.valueOf(aux.libro.autor);
+        Data[3]= String.valueOf(aux.libro.isbn);
+        Modelo.addRow(Data);
+        aux=aux.siguiente;
+        Contador += 1;
+		}
+    }
+    //Metodo Top Muestra la cima de la Pila
+    public void Top(){
+        
+        String Data[] = new String[4];
+         int Contador = 0;
 		Nodo aux=cima;
-		while (aux!=null){
+		while (Contador == 0){
                     Data[0]= String.valueOf(Contador);
                     Data[1]= String.valueOf(aux.libro.titulo);
                     Data[2]= String.valueOf(aux.libro.autor);
                     Data[3]= String.valueOf(aux.libro.isbn);
-                    Modelo.addRow(Data);
                     aux=aux.siguiente;
                     Contador += 1;
 		}
+                 Modelo.addRow(Data);
+        
     }
     
     public Pilas() {
@@ -100,9 +102,12 @@ public class Pilas extends javax.swing.JFrame {
         txt_Autor = new javax.swing.JTextField();
         txt_ISBN = new javax.swing.JTextField();
         btn_Ingresar = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btn_Borrar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         Tabla = new javax.swing.JTable();
+        btn_Top = new javax.swing.JButton();
+        btn_Mostrar = new javax.swing.JButton();
+        btn_Vacia = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -119,7 +124,12 @@ public class Pilas extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Borrar Cima");
+        btn_Borrar.setText("Borrar Cima");
+        btn_Borrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_BorrarActionPerformed(evt);
+            }
+        });
 
         Tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -134,6 +144,27 @@ public class Pilas extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(Tabla);
 
+        btn_Top.setText("Top");
+        btn_Top.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_TopActionPerformed(evt);
+            }
+        });
+
+        btn_Mostrar.setText("Mostrar");
+        btn_Mostrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_MostrarActionPerformed(evt);
+            }
+        });
+
+        btn_Vacia.setText("Verificar Lista vacia");
+        btn_Vacia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_VaciaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -142,27 +173,36 @@ public class Pilas extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txt_Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txt_Autor)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_Autor)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txt_ISBN))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btn_Ingresar)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_Borrar))))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btn_Vacia)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_Top)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_ISBN))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btn_Ingresar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2))))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btn_Mostrar)
+                        .addGap(147, 147, 147))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,21 +218,47 @@ public class Pilas extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(txt_Autor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_Ingresar)
-                    .addComponent(jButton2))
+                    .addComponent(btn_Borrar))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_Top)
+                    .addComponent(btn_Mostrar)
+                    .addComponent(btn_Vacia))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Boton para ingresar datos
     private void btn_IngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_IngresarActionPerformed
         Limpiar();
-        Crear();
         Ingresar();
         Mostrar();
     }//GEN-LAST:event_btn_IngresarActionPerformed
+    //Boton Borrar
+    private void btn_BorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_BorrarActionPerformed
+        Limpiar();
+        Borrar();
+        Mostrar();
+    }//GEN-LAST:event_btn_BorrarActionPerformed
+    //Boton Top
+    private void btn_TopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_TopActionPerformed
+        Limpiar();
+        Top();
+    }//GEN-LAST:event_btn_TopActionPerformed
+    //Boton Mostrar
+    private void btn_MostrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_MostrarActionPerformed
+        Limpiar();
+        Mostrar();
+    }//GEN-LAST:event_btn_MostrarActionPerformed
+    //Boton Verificar lista vacia
+    private void btn_VaciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_VaciaActionPerformed
+        if(cima == null){JOptionPane.showMessageDialog(null,"La lista se encuentra vacia.");}
+        else{JOptionPane.showMessageDialog(null,"La lista contiene dato/s.");}
+    }//GEN-LAST:event_btn_VaciaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -231,8 +297,11 @@ public class Pilas extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabla;
+    private javax.swing.JButton btn_Borrar;
     private javax.swing.JButton btn_Ingresar;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btn_Mostrar;
+    private javax.swing.JButton btn_Top;
+    private javax.swing.JButton btn_Vacia;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
