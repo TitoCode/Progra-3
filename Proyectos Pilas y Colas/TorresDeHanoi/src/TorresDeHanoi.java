@@ -474,6 +474,7 @@ public class TorresDeHanoi extends javax.swing.JFrame {
             A = null;
             B = null;
             C = null;
+            movimientos = 0;
             num = Integer.parseInt(this.txt_NoElementos.getText());
             for(int i = 1; i <= num; i++){
                  LlenarLista(i);
