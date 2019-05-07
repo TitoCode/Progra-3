@@ -30,20 +30,39 @@ public class Pilas extends javax.swing.JFrame {
         StrAutor = this.txt_Autor.getText();
         StrISBN = this.txt_ISBN.getText();        
         Libro Nuevo = new Libro(StrTitulo, StrAutor, StrISBN);      
-        InsertarPrincipio(Nuevo);
+        InsertarFinal(Nuevo);
         
     }
     //Metodo InsertarPrincipio es llamado en Metodo Ingresar para agregar datos a la lista.
-    public void InsertarPrincipio(Libro libro) {
-        Nodo Nuevo =new Nodo(libro);
-        Nuevo.siguiente=cima;
-	cima=Nuevo;
-	contLista++;	
+    public void InsertarFinal(Libro libro) {
+		Nodo nodo=new Nodo(libro);
+		if (cima==null){
+                    cima=nodo;
+		}else{
+                    Nodo puntero=cima;
+                    while (puntero.siguiente!=null) {
+                        puntero=puntero.siguiente;
+                    }
+                    puntero.siguiente=nodo;
+		}
+		contLista++;
 	}
     //Metodo Borrar elimina la cima de la pila.
     public void Borrar(){
         
-        cima=cima.siguiente;
+        if (cima!= null) {
+                if (cima.siguiente==null) {
+                    cima=null;  
+                    contLista--;
+                } else {
+                    Nodo puntero=cima;
+                    while (puntero.siguiente.siguiente!=null) {                    
+                        puntero=puntero.siguiente;
+                    }
+                    puntero.siguiente=null;
+                    contLista--;
+                }
+            } 
         
     }
     //Metodo Mostrar agrega los datos en la lista a la tabla
@@ -68,7 +87,7 @@ public class Pilas extends javax.swing.JFrame {
         String Data[] = new String[4];
          int Contador = 0;
 		Nodo aux=cima;
-		while (Contador == 0){
+		while (Contador != contLista){
                     Data[0]= String.valueOf(Contador);
                     Data[1]= String.valueOf(aux.libro.titulo);
                     Data[2]= String.valueOf(aux.libro.autor);
